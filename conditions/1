@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Using for loop to display all the files and cat out in the folder we run
+
+
+LIST=`ls -al |grep .sh`
+
+for i in `$LIST`
+  do 
+     cat $i
+ done
