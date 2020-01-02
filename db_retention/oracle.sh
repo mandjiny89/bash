@@ -4,21 +4,21 @@
 
 hostname=$(hostname)
 D=`date +%y%m%d%H%M`
-LOGFILE="/sapmedia_BOTP/cleanbackups/centrallog"
+LOGFILE="/media/clean/log"
 
-cd /backup_BOTP
+cd /backup
 FolderList=$(ls |awk 'length ==3')
 for folders in $FolderList
 do
-        cd /backup_BOTP/$folders/
-        ls |grep sapbackup
+        cd /backup/$folders/
+        ls |grep backup
         if [ `echo $?` == 0 ]
         then
-        	cd /backup_BOTP/$folders/sapbackup/
+        	cd /backup/$folders/backup/
 #	        LastBackup_3=$(ls -ltr |awk '{print $9}' |awk 'length ==8'|tail -n1)
 		LastBackup_3=$(ls -ltr | egrep '^d' |awk '{print $9}' |awk 'length ==8'|tail -n1)
 		Value=good
-        	OracleLogCheck=`less /backup_BOTP/db_backup/centrallog |grep $LastBackup_3 |head -1`
+        	OracleLogCheck=`less /backup/db/log |grep $LastBackup_3 |head -1`
 	        OracleStatus_1=`echo $OracleLogCheck |cut -c1-8`
         	OracleStatus_2=`echo $OracleLogCheck |cut -c61-65`
 	        Final_3="$LastBackup_3$Value"
@@ -28,7 +28,7 @@ do
         if [ $Final_3 == $Final_4 ]
         then
                 echo "$folders $D Successfull Oracle backup copy found, deleting old files" >>$LOGFILE
-                cd /backup_BOTP/$folders/sapbackup/
+                cd /backup/$folders/some/
 		find . -mtime +$DayOld2 -name "*" -exec rm -r {} \;
 	else
 		echo "$folders $D Unsuccessfull bakcup copy found, no deletion done" >>$LOGFILE

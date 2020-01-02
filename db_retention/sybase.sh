@@ -3,16 +3,16 @@
 # This script is created for Sybase DB backup cleaning as per the client request, it check the latest backup file as per the file and delete any file older than the actual file day+2
 hostname=$(hostname)
 D=`date +%y%m%d%H%M`
-LOGFILE="/sapmedia_BOTP/cleanbackups/centrallog"
+LOGFILE="/media/clean/log"
 
 
 
-cd /backup_BOTP
+cd /backup
 FolderList=$(ls |awk 'length ==3')
 #echo $FolderList >>$LOGFILE
 for folders in $FolderList
 do
-        cd /backup_BOTP/$folders/
+        cd /backup/$folders/
 #echo "$folders within for loop">>$LOGFILE
 	ls |grep dmp
 #ls |grep dmp >>$LOGFILE
@@ -21,7 +21,7 @@ do
 	then
 #		echo "$folders This is Sybase DB backup deletion script"
 #		echo "$folders This is Sybase DB backup deletion script" >>$LOGFILE
-        	cd /backup_BOTP/$folders/
+        	cd /backup/$folders/
 	     #   ls -lrt |grep DB |tail -1
         	RAW=$(ls -ltr |grep DB| tail -n1 |awk '{ print $9 }')
 	        echo $RAW
@@ -35,7 +35,7 @@ do
 		FOURTH=good
 		DayOld=`perl -l -e 'print -M $ARGV[0], " days"' "$RAW" |cut -d . -f1`
                 DayOld2=`echo $DayOld+2 |bc`
-	        LogCheck=`less /backup_BOTP/db_backup/centrallog |grep DB |grep $THIRD |grep $folders`
+	        LogCheck=`less /backup/db/log |grep DB |grep $THIRD |grep $folders`
         	echo $LogCheck
         	Status_1=`echo $LogCheck |cut -c1-3`
 	        echo $Status_1
@@ -55,7 +55,7 @@ do
         then
                 echo "Successfull sybase DB copy find and deleting all other old files"
                 echo "$folders $D Successfull sybase DB copy find and deleting all other old files" >>$LOGFILE
-                cd /backup_BOTP/$folders
+                cd /backup/$folders
                 pwd
 		find . -mtime +$DayOld2 -name "*" -exec rm {} \;
 		#exit
